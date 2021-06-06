@@ -22,12 +22,23 @@ function App() {
 
       const data = await response.json();
 
-      const transformedMovies = data.results.map(movieData => {
+      const loadedMovies = [];
+
+      for (const key in data) {
+        loadedMovies.push({
+          id: key,
+          title: data[key].title,
+          openingText: data[key].openingText,
+          releaseDate: data[key].releaseDate
+        })
+      }
+
+      const transformedMovies = loadedMovies.map(movieData => {
         return {
           id: movieData.episode_id,
           title: movieData.title,
-          openingText: movieData.opening_crawl,
-          releaseDate: movieData.release_date
+          openingText: movieData.openingText,
+          releaseDate: movieData.releaseDate
         };
       });
 
@@ -39,8 +50,16 @@ function App() {
     setIsLoading(false);
   }, []);
 
-  const addMovieHander = (movie) => {
-    console.log(movie);
+  async function addMovieHander(movie) {
+    const response = await fetch('https://react-http-d6779-default-rtdb.asia-southeast1.firebasedatabase.app/movies.json', {
+      method: 'POST',
+      body: JSON.stringify(movie),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
   };
 
   useEffect(() => {
